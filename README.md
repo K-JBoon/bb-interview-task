@@ -8,7 +8,10 @@ Our new client `placeholdd` has just started integrating with our platform, but 
 ## References
 
 - placeholdd API Reference: https://jsonplaceholder.typicode.com/
-- Blue Billywig Player API Reference: https://support.bluebillywig.com/blue-billywig-player-api
+- Blue Billywig Player API Reference:
+  - Embedding: https://support.bluebillywig.com/advanced-player-settings/advanced-embedding/#2-0-embedding
+  - Events: https://support.bluebillywig.com/player-api/events-modes-and-phases/
+  - Methods: https://support.bluebillywig.com/player-api/methods/
 - Static Data: See the `static` directory.
 
 ## Challenge
