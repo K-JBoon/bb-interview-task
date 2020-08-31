@@ -17,13 +17,14 @@ Using any language(s) you prefer, build an application that:
 
 - Can display a placeholdd post as a web page by ID
 - Can embed the correct video on that page. All videos may be embedded with the `default` playout.
-- Can identify a user through either a query parameter (`?user=123`) or a Local Storage value (use the key `user_id`), though neither is guaranteed to be specified.
+- Can identify a user through either a query parameter (`user=123`) or a Local Storage value (use the key `user_id`), though neither is guaranteed to be specified.
 - Keeps track of which videos a user has watched at least 40% of, by updating the user using the placeholdd API
 - Keeps track of which videos a user has finished watching, by updating the user using the placeholdd API
 
 ## Notes
 
 - You're allowed to host the application in whatever way you prefer: CodePen? Docker container? Local HTTP server? On your own website? Anything goes, but make sure you also submit your solution through a Git repository.
+- Make a fork of this Git repository before you start working on the task.
 - Commit early, commit often: Let us see how you solve the challenge step-by-step. Frequent commits and clear commit messages are a good way for us to get an idea of your thought process.
 - JSONPlaceholder does not actually store any write operations, you can validate correctness by directly checking the response to your requests. Subsequently fetching an "updated" item will not show whatever updates you did through POST, PUT or PATCH.
 
