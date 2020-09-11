@@ -29,6 +29,8 @@ Using any language(s) you prefer, build an application that:
 - You're allowed to host the application in whatever way you prefer: CodePen? Docker container? Local HTTP server? On your own website? Anything goes, but make sure you also submit your solution through a Git repository.
 - Make a fork of this Git repository before you start working on the task.
 - Commit early, commit often: Let us see how you solve the challenge step-by-step. Frequent commits and clear commit messages are a good way for us to get an idea of your thought process.
+- Try to not spend more than 4 hours solving this at most. Write down what your solution would be if you had more time, or where you ended up taking shortcuts to save time.
+- It's more important to have done parts of the challenge fully, than to have everything barely working. It's alright if you don't finish everything!
 - JSONPlaceholder does not actually store any write operations, you can validate correctness by directly checking the response to your requests. Subsequently fetching an "updated" item will not show whatever updates you did through POST, PUT or PATCH.
 
 Good luck!
