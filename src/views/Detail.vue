@@ -4,7 +4,16 @@
       <h2>
         {{ this.video.clipData.title ? this.video.clipData.title : "Video" }}
       </h2>
-      <div v-if="this.video.error">{{ this.video.error }}</div>
+      <div v-if="this.video.notFound">
+        <p>
+          Video niet gevonden. Probeer één van onderstaande id's
+        </p>
+        <div class="container-items">
+          <div v-for="item in placeholdValues" :key="item" class="item" @click="setPlaceholdID(item)">
+            {{ item }}
+          </div>
+        </div>
+      </div>
       <!-- no error, are we loading? -->
       <div v-else-if="!this.video.ready">
         Video is aan het laden...
@@ -33,9 +42,20 @@ export default {
         duration: null,
         progress: 0,
         ready: false,
-        error: null
+        notFound: false
       }
     };
+  },
+  computed: {
+    placeholdValues() {
+      return this.mapping
+        .map((item) => {
+          return item[0];
+        })
+        .sort((a, b) => {
+          return a - b;
+        });
+    }
   },
   methods: {
     async init() {
@@ -58,7 +78,7 @@ export default {
       const video_id = this.mapPlaceholdToVideo(placehold_id);
 
       if (!video_id) {
-        this.video.error = "Video niet gevonden";
+        this.video.notFound = true;
         return;
       }
       this.video.id = video_id;
@@ -173,6 +193,9 @@ export default {
         });
       });
       document.head.appendChild(playerScript);
+    },
+    setPlaceholdID(placeholdID) {
+      this.$router.push(`/${placeholdID}`);
     }
   },
   async created() {
@@ -187,7 +210,9 @@ export default {
   watch: {
     "$route.params.id"() {
       // changing ID in url? init again.
-      this.video.player.destruct();
+      if (this.video.player) {
+        this.video.player.destruct();
+      }
 
       // @todo: refactor for less duplicate code
       this.placehold_id = null;
@@ -196,7 +221,7 @@ export default {
       this.video.duration = null;
       this.video.progress = 0;
       this.video.ready = false;
-      this.video.error = null;
+      this.video.notFound = false;
 
       this.init();
     }
@@ -209,5 +234,17 @@ main {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px 12px;
+}
+
+.container-items {
+  display: flex;
+  flex-wrap: wrap;
+}
+.item {
+  padding: 12px;
+  margin: 2px;
+  border: 1px solid black;
+  border-radius: 12px;
+  cursor: pointer;
 }
 </style>
