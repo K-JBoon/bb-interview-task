@@ -36,6 +36,36 @@ export default {
     };
   },
   methods: {
+    async init() {
+      // get user from router / local storage
+      this.initUserID();
+
+      // get requested video parameter from URL
+      const placehold_id = parseInt(this.$route.params.id, 10);
+      this.placehold_id = placehold_id;
+
+      // get mapping file
+      // @todo: check if this can be done better
+      await axios.get("mapping.csv").then((result) => {
+        const json = Papa.parse(result.data, {
+          header: false
+        });
+        this.mapping = json.data;
+      });
+
+      const video_id = this.mapPlaceholdToVideo(placehold_id);
+
+      if (!video_id) {
+        this.video.error = "Video niet gevonden";
+        return;
+      }
+      this.video.id = video_id;
+
+      // mounted ready and valid video id? init player
+      this.$nextTick(() => {
+        this.initPlayer();
+      });
+    },
     initUserID() {
       // get query parameter user from url (user) or local storage (user_id)
       const user_id_query = this.$route.query.user;
@@ -144,39 +174,29 @@ export default {
     }
   },
   async created() {
-    // get user from router / local storage
-    this.initUserID();
-
-    // get requested video parameter from URL
-    const placehold_id = parseInt(this.$route.params.id, 10);
-    this.placehold_id = placehold_id;
-
-    // get mapping file
-    // @todo: check if this can be done better
-    await axios.get("mapping.csv").then((result) => {
-      const json = Papa.parse(result.data, {
-        header: false
-      });
-      this.mapping = json.data;
-    });
-
-    const video_id = this.mapPlaceholdToVideo(placehold_id);
-
-    if (!video_id) {
-      this.video.error = "Video niet gevonden";
-      return;
-    }
-    this.video.id = video_id;
-
-    // mounted ready and valid video id? init player
-    this.$nextTick(() => {
-      this.initPlayer();
-    });
+    this.init();
   },
   destroyed() {
     // if you close this component: check progress if a video was set
     if (this.video.ready === true) {
       this.checkProgress();
+    }
+  },
+  watch: {
+    "$route.params.id"() {
+      // changing ID in url? init again.
+      this.video.player.destruct();
+
+      // @todo: refactor for less duplicate code
+      this.placehold_id = null;
+      this.video.clipData = {};
+      this.video.id = null;
+      this.video.duration = null;
+      this.video.progress = 0;
+      this.video.ready = false;
+      this.video.error = null;
+
+      this.init();
     }
   }
 };
