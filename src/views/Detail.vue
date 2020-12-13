@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div>Hello world</div>
-    <div id="player">Video place</div>
+    <div id="player">Video</div>
   </div>
 </template>
 
 <script>
 const axios = require("axios");
+const api = "https://jsonplaceholder.typicode.com/posts";
 
 export default {
   name: "Detail",
@@ -37,23 +37,47 @@ export default {
     },
     checkProgress() {
       const timeSpent = this.videoPlayer.getCurrentTime(); // returns Float
-      console.log(timeSpent);
 
       // check if user started
       if (timeSpent === 0) {
         return;
       }
 
-      // note: oldProgress default is currently considered 0 since we do not load user data
-      const oldProgress = this.progress;
-      const newProgress = (timeSpent / this.duration) * 100;
-      console.log(newProgress);
-
-      if (newProgress >= 40 && oldProgress < 40) {
-        // update when > 40% watched
+      // no logged in user so we cannot set progress
+      // @todo: do we need to show an error message?
+      if (!this.user_id) {
+        return;
       }
+
+      // @todo: oldProgress default is currently considered 0 since we do not load user data
+      const oldProgress = this.progress;
+      // duration is integer, time is float. clean so max progress = 100
+      const newProgress = Math.min((timeSpent / this.duration) * 100, 100);
+
       if (newProgress >= 100 && oldProgress < 100) {
-        // update   finished video
+        // update finished video
+        axios
+          .post(api, {
+            user_id: this.user_id,
+            id: this.placehold_id,
+            progress: newProgress,
+            finished: true
+          })
+          .then((result) => {
+            console.log(result.data);
+          });
+      } else if (newProgress >= 40 && oldProgress < 40) {
+        // update when > 40% watched but not finished yet
+        axios
+          .post(api, {
+            user_id: this.user_id,
+            id: this.placehold_id,
+            progress: newProgress,
+            finished: false
+          })
+          .then((result) => {
+            console.log(result.data);
+          });
       }
 
       // update state
@@ -69,8 +93,7 @@ export default {
     const video_id = 3888497;
     this.video_id = video_id;
     // found or not found
-    // if found: GET request to get the video data
-    axios.get("");
+
     // not found: error message
     // ** user id **
     this.initUserID();
