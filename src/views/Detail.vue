@@ -3,6 +3,11 @@
     <h2>
       {{ this.video.clipData.title ? this.video.clipData.title : "Video" }}
     </h2>
+    <div v-if="this.video.error">{{ this.video.error }}</div>
+    <!-- no error, are we loading? -->
+    <div v-else-if="!this.video.ready">
+      Video is aan het laden...
+    </div>
     <div id="player"></div>
   </div>
 </template>
@@ -24,7 +29,9 @@ export default {
         clipData: {},
         id: null,
         duration: null,
-        progress: 0
+        progress: 0,
+        ready: false,
+        error: null
       }
     };
   },
@@ -45,8 +52,6 @@ export default {
     mapPlaceholdToVideo(placeholdID) {
       // stored in this.mapping as [placeholdId, videoID]
       const result = this.mapping.find((item) => {
-        console.log(parseInt(item[0], 10));
-        console.log(placeholdID);
         return parseInt(item[0], 10) === placeholdID;
       });
 
@@ -107,11 +112,42 @@ export default {
 
       // update state
       this.video.progress = newProgress;
+    },
+    initPlayer() {
+      // initialize player
+      let playerScript = document.createElement("script");
+      playerScript.setAttribute("src", "http://demo.bbvms.com/launchpad/");
+      playerScript.addEventListener("load", () => {
+        // when loaded: set the video
+        this.video.player = new window.bluebillywig.Player(
+          `http://demo.bbvms.com/p/default/c/${this.video.id}.json`,
+          {
+            target: document.getElementById("player"),
+            autoPlay: "false"
+          }
+        );
+        this.video.player.on("ready", () => {
+          this.video.ready = true;
+          // set duration. Note: videoPlayer returns a whole value as a string
+          const duration = parseInt(this.video.player.getDuration(), 10);
+          if (duration >= 0) {
+            this.video.duration = duration;
+          }
+          this.video.clipData = this.video.player.getClipData();
+        });
+        // keep track of progress
+        this.video.player.on("statechange", () => {
+          this.checkProgress();
+        });
+      });
+      document.head.appendChild(playerScript);
     }
   },
   async created() {
-    // ** video **
-    // get parameter from URL
+    // get user from router / local storage
+    this.initUserID();
+
+    // get requested video parameter from URL
     const placehold_id = parseInt(this.$route.params.id, 10);
     this.placehold_id = placehold_id;
 
@@ -121,53 +157,27 @@ export default {
       const json = Papa.parse(result.data, {
         header: false
       });
-      console.log(json.data);
       this.mapping = json.data;
     });
 
     const video_id = this.mapPlaceholdToVideo(placehold_id);
-    console.log(video_id);
-    // const video_id = 3888497;
+
     if (!video_id) {
-      // not found: error message
+      this.video.error = "Video niet gevonden";
       return;
     }
     this.video.id = video_id;
 
-    // user id
-    this.initUserID();
-  },
-  mounted() {
-    // initialize player
-    let playerScript = document.createElement("script");
-    playerScript.setAttribute("src", "http://demo.bbvms.com/launchpad/");
-    playerScript.addEventListener("load", () => {
-      // when loaded: set the video
-      this.video.player = new window.bluebillywig.Player(
-        `http://demo.bbvms.com/p/default/c/${this.video.id}.json`,
-        {
-          target: document.getElementById("player"),
-          autoPlay: "false"
-        }
-      );
-      this.video.player.on("ready", () => {
-        // set duration. Note: videoPlayer returns a whole value as a string
-        const duration = parseInt(this.video.player.getDuration(), 10);
-        if (duration >= 0) {
-          this.video.duration = duration;
-        }
-        this.video.clipData = this.video.player.getClipData();
-      });
-      // keep track of progress
-      this.video.player.on("statechange", () => {
-        this.checkProgress();
-      });
+    // mounted ready and valid video id? init player
+    this.$nextTick(() => {
+      this.initPlayer();
     });
-    document.head.appendChild(playerScript);
   },
   destroyed() {
-    // if you close this component: check progress
-    this.checkProgress();
+    // if you close this component: check progress if a video was set
+    if (this.video.ready === true) {
+      this.checkProgress();
+    }
   }
 };
 </script>
