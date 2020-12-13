@@ -15,10 +15,12 @@ export default {
       mapping: {},
       placehold_id: null,
       user_id: null,
-      video_id: null,
-      videoPlayer: null,
-      duration: null,
-      progress: 0
+      video: {
+        player: null,
+        id: null,
+        duration: null,
+        progress: 0
+      }
     };
   },
   methods: {
@@ -36,7 +38,7 @@ export default {
       }
     },
     checkProgress() {
-      const timeSpent = this.videoPlayer.getCurrentTime(); // returns Float
+      const timeSpent = this.video.player.getCurrentTime(); // returns Float
 
       // check if user started
       if (timeSpent === 0) {
@@ -50,9 +52,13 @@ export default {
       }
 
       // @todo: oldProgress default is currently considered 0 since we do not load user data
-      const oldProgress = this.progress;
-      // duration is integer, time is float. clean so max progress = 100
-      const newProgress = Math.min((timeSpent / this.duration) * 100, 100);
+      const oldProgress = this.video.progress;
+      const duration = this.video.duration;
+
+      let newProgress = (timeSpent / duration) * 100;
+      // clean to int
+      // clean max progress = 100. Progress can be > 100 because duration is int and time is float
+      newProgress = Math.min(Math.ceil(newProgress), 100);
 
       if (newProgress >= 100 && oldProgress < 100) {
         // update finished video
@@ -81,7 +87,7 @@ export default {
       }
 
       // update state
-      this.progress = newProgress;
+      this.video.progress = newProgress;
     }
   },
   created() {
@@ -91,7 +97,7 @@ export default {
     this.placehold_id = parseInt(placehold_id, 10);
     // lookup paratemer in mapping.csv for video id
     const video_id = 3888497;
-    this.video_id = video_id;
+    this.video.id = video_id;
     // found or not found
 
     // not found: error message
@@ -104,22 +110,22 @@ export default {
     playerScript.setAttribute("src", "http://demo.bbvms.com/launchpad/");
     playerScript.addEventListener("load", () => {
       // when loaded: set the video
-      this.videoPlayer = new window.bluebillywig.Player(
-        `http://demo.bbvms.com/p/default/c/${this.video_id}.json`,
+      this.video.player = new window.bluebillywig.Player(
+        `http://demo.bbvms.com/p/default/c/${this.video.id}.json`,
         {
           target: document.getElementById("player"),
           autoPlay: "false"
         }
       );
-      this.videoPlayer.on("ready", () => {
+      this.video.player.on("ready", () => {
         // set duration. Note: videoPlayer returns a whole value as a string
-        const duration = parseInt(this.videoPlayer.getDuration(), 10);
+        const duration = parseInt(this.video.player.getDuration(), 10);
         if (duration >= 0) {
-          this.duration = duration;
+          this.video.duration = duration;
         }
       });
       // keep track of progress
-      this.videoPlayer.on("statechange", () => {
+      this.video.player.on("statechange", () => {
         this.checkProgress();
       });
     });
