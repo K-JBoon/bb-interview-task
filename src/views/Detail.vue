@@ -36,9 +36,9 @@ export default {
       placehold_id: null,
       user_id: null,
       video: {
+        id: null,
         player: null,
         clipData: {},
-        id: null,
         duration: null,
         progress: 0,
         ready: false,
@@ -47,6 +47,7 @@ export default {
     };
   },
   computed: {
+    // Return placeholder ids in mapping, sorted asc
     placeholdValues() {
       return this.mapping
         .map((item) => {
@@ -70,7 +71,8 @@ export default {
       // @todo: check if this can be done better
       await axios.get("mapping.csv").then((result) => {
         const json = Papa.parse(result.data, {
-          header: false
+          header: false,
+          skipEmptyLines: "greedy"
         });
         this.mapping = json.data;
       });
@@ -83,7 +85,7 @@ export default {
       }
       this.video.id = video_id;
 
-      // mounted ready and valid video id? init player
+      // mounted DOM? init player
       this.$nextTick(() => {
         this.initPlayer();
       });
@@ -92,11 +94,11 @@ export default {
       // get query parameter user from url (user) or local storage (user_id)
       const user_id_query = this.$route.query.user;
       const user_id_local = localStorage.getItem("user_id");
-      // id defined in url overrules local storage
+      // id defined in url overrules local storage (@todo: check if this meets business requirement)
       const user_id = user_id_query ? user_id_query : user_id_local;
-      this.user_id = parseInt(user_id); // not required! what if no userid is set?
+      this.user_id = parseInt(user_id, 10); // not required! what if no userid is set?
 
-      // do we set the new user_id in localstarge now? (check requirements)
+      // set in localstorage. @todo check if this is required
       if (user_id) {
         localStorage.setItem("user_id", user_id);
       }
@@ -132,8 +134,7 @@ export default {
       const duration = this.video.duration;
 
       let newProgress = (timeSpent / duration) * 100;
-      // clean to int
-      // clean max progress = 100. Progress can be > 100 because duration is int and time is float
+      // clean to int && clean max progress = 100. Progress can be > 100 because duration is int and time is float
       newProgress = Math.min(Math.ceil(newProgress), 100);
 
       if (newProgress >= 100 && oldProgress < 100) {
@@ -198,7 +199,7 @@ export default {
       this.$router.push(`/${placeholdID}`);
     }
   },
-  async created() {
+  created() {
     this.init();
   },
   destroyed() {
