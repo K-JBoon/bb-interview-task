@@ -1,15 +1,17 @@
 <template>
-  <div>
-    <h2>
-      {{ this.video.clipData.title ? this.video.clipData.title : "Video" }}
-    </h2>
-    <div v-if="this.video.error">{{ this.video.error }}</div>
-    <!-- no error, are we loading? -->
-    <div v-else-if="!this.video.ready">
-      Video is aan het laden...
+  <main>
+    <div>
+      <h2>
+        {{ this.video.clipData.title ? this.video.clipData.title : "Video" }}
+      </h2>
+      <div v-if="this.video.error">{{ this.video.error }}</div>
+      <!-- no error, are we loading? -->
+      <div v-else-if="!this.video.ready">
+        Video is aan het laden...
+      </div>
+      <div id="player"></div>
     </div>
-    <div id="player"></div>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -119,7 +121,7 @@ export default {
         axios
           .post(api, {
             user_id: this.user_id,
-            id: this.placehold_id,
+            placehold_id: this.placehold_id,
             progress: newProgress,
             finished: true
           })
@@ -131,7 +133,7 @@ export default {
         axios
           .post(api, {
             user_id: this.user_id,
-            id: this.placehold_id,
+            placehold_id: this.placehold_id,
             progress: newProgress,
             finished: false
           })
@@ -201,3 +203,11 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 12px;
+}
+</style>
