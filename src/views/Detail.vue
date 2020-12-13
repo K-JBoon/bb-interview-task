@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div id="player">Video</div>
+    <h2>
+      {{ this.video.clipData.title ? this.video.clipData.title : "Video" }}
+    </h2>
+    <div id="player"></div>
   </div>
 </template>
 
@@ -17,6 +20,7 @@ export default {
       user_id: null,
       video: {
         player: null,
+        clipData: {},
         id: null,
         duration: null,
         progress: 0
@@ -123,6 +127,7 @@ export default {
         if (duration >= 0) {
           this.video.duration = duration;
         }
+        this.video.clipData = this.video.player.getClipData();
       });
       // keep track of progress
       this.video.player.on("statechange", () => {
