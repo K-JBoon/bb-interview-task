@@ -10,6 +10,7 @@
 <script>
 const axios = require("axios");
 const api = "https://jsonplaceholder.typicode.com/posts";
+const Papa = require("papaparse");
 
 export default {
   name: "Detail",
@@ -40,6 +41,20 @@ export default {
       if (user_id) {
         localStorage.setItem("user_id", user_id);
       }
+    },
+    mapPlaceholdToVideo(placeholdID) {
+      // stored in this.mapping as [placeholdId, videoID]
+      const result = this.mapping.find((item) => {
+        console.log(parseInt(item[0], 10));
+        console.log(placeholdID);
+        return parseInt(item[0], 10) === placeholdID;
+      });
+
+      if (!result) {
+        return null;
+      }
+      // return videoID
+      return result[1];
     },
     checkProgress() {
       const timeSpent = this.video.player.getCurrentTime(); // returns Float
@@ -94,18 +109,32 @@ export default {
       this.video.progress = newProgress;
     }
   },
-  created() {
+  async created() {
     // ** video **
     // get parameter from URL
-    const placehold_id = this.$route.params.id;
-    this.placehold_id = parseInt(placehold_id, 10);
-    // lookup paratemer in mapping.csv for video id
-    const video_id = 3888497;
-    this.video.id = video_id;
-    // found or not found
+    const placehold_id = parseInt(this.$route.params.id, 10);
+    this.placehold_id = placehold_id;
 
-    // not found: error message
-    // ** user id **
+    // get mapping file
+    // @todo: check if this can be done better
+    await axios.get("mapping.csv").then((result) => {
+      const json = Papa.parse(result.data, {
+        header: false
+      });
+      console.log(json.data);
+      this.mapping = json.data;
+    });
+
+    const video_id = this.mapPlaceholdToVideo(placehold_id);
+    console.log(video_id);
+    // const video_id = 3888497;
+    if (!video_id) {
+      // not found: error message
+      return;
+    }
+    this.video.id = video_id;
+
+    // user id
     this.initUserID();
   },
   mounted() {
@@ -135,6 +164,10 @@ export default {
       });
     });
     document.head.appendChild(playerScript);
+  },
+  destroyed() {
+    // if you close this component: check progress
+    this.checkProgress();
   }
 };
 </script>
