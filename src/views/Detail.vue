@@ -17,7 +17,8 @@ export default {
       user_id: null,
       video_id: null,
       videoPlayer: null,
-      duration: null
+      duration: null,
+      progress: 0
     };
   },
   methods: {
@@ -35,10 +36,28 @@ export default {
       }
     },
     checkProgress() {
-      console.log(this.videoPlayer.getCurrentTime());
+      const timeSpent = this.videoPlayer.getCurrentTime(); // returns Float
+      console.log(timeSpent);
 
-      // update when > 40% watched
-      // update when finished video
+      // check if user started
+      if (timeSpent === 0) {
+        return;
+      }
+
+      // note: oldProgress default is currently considered 0 since we do not load user data
+      const oldProgress = this.progress;
+      const newProgress = (timeSpent / this.duration) * 100;
+      console.log(newProgress);
+
+      if (newProgress >= 40 && oldProgress < 40) {
+        // update when > 40% watched
+      }
+      if (newProgress >= 100 && oldProgress < 100) {
+        // update   finished video
+      }
+
+      // update state
+      this.progress = newProgress;
     }
   },
   created() {
