@@ -116,6 +116,9 @@ export default {
       return result[1];
     },
     checkProgress() {
+      // @todo: one video can have many clips
+      // do we want to save the progress per clip? or per video?
+
       const timeSpent = this.video.player.getCurrentTime(); // returns Float
 
       // check if user started
