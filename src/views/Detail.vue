@@ -52,17 +52,17 @@ export default {
     this.initUserID();
   },
   mounted() {
+    // initialize player
     let playerScript = document.createElement("script");
     playerScript.setAttribute("src", "http://demo.bbvms.com/launchpad/");
-    document.head.appendChild(playerScript);
-
-    // make this pretty async later
-    setTimeout(() => {
+    playerScript.addEventListener("load", () => {
+      // when loaded: set the video
       new window.bluebillywig.Player(`http://demo.bbvms.com/p/default/c/${this.video_id}.json`, {
         target: document.getElementById("player"),
         autoPlay: "false"
       });
-    }, 500);
+    });
+    document.head.appendChild(playerScript);
   }
 };
 </script>
