@@ -12,16 +12,15 @@ export default {
   name: "Detail",
   data() {
     return {
-      user_id: null,
+      mapping: {},
       placehold_id: null,
+      user_id: null,
       video_id: null,
-      video: {},
-      mapping: {}
+      videoPlayer: null,
+      duration: null
     };
   },
   methods: {
-    // update when > 40% watched
-    // update when finished video
     initUserID() {
       // get query parameter user from url (user) or local storage (user_id)
       const user_id_query = this.$route.query.user;
@@ -34,6 +33,12 @@ export default {
       if (user_id) {
         localStorage.setItem("user_id", user_id);
       }
+    },
+    checkProgress() {
+      console.log(this.videoPlayer.getCurrentTime());
+
+      // update when > 40% watched
+      // update when finished video
     }
   },
   created() {
@@ -57,9 +62,23 @@ export default {
     playerScript.setAttribute("src", "http://demo.bbvms.com/launchpad/");
     playerScript.addEventListener("load", () => {
       // when loaded: set the video
-      new window.bluebillywig.Player(`http://demo.bbvms.com/p/default/c/${this.video_id}.json`, {
-        target: document.getElementById("player"),
-        autoPlay: "false"
+      this.videoPlayer = new window.bluebillywig.Player(
+        `http://demo.bbvms.com/p/default/c/${this.video_id}.json`,
+        {
+          target: document.getElementById("player"),
+          autoPlay: "false"
+        }
+      );
+      this.videoPlayer.on("ready", () => {
+        // set duration. Note: videoPlayer returns a whole value as a string
+        const duration = parseInt(this.videoPlayer.getDuration(), 10);
+        if (duration >= 0) {
+          this.duration = duration;
+        }
+      });
+      // keep track of progress
+      this.videoPlayer.on("statechange", () => {
+        this.checkProgress();
       });
     });
     document.head.appendChild(playerScript);
