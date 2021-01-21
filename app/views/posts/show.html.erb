@@ -7,4 +7,23 @@
   <%= @post.mediaclip_id %>
 </p>
 
+<script src="http://demo.bbvms.com/launchpad/"></script>
+
+<div id="myPlayerDiv"></div>
+
 <%= link_to 'Back', posts_path %>
+
+
+
+<script>
+
+// Embed the player in the element "myPlayerDiv". Other playout settings (like width, height, autoPlay) can also be overruled by including them in the object passed as a second parameter:
+
+var myPlayer = new bluebillywig.Player( "http://demo.bbvms.com/p/default/c/<%= @post.mediaclip_id %>.json", {
+  target: document.getElementById("myPlayerDiv"),
+  autoPlay: "false"
+});
+
+myPlayer.play();
+
+</script>
