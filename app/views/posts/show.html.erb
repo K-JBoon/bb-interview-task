@@ -27,32 +27,24 @@ let myPlayer = new bluebillywig.Player( `http://demo.bbvms.com/p/default/c/${med
   autoPlay: "false"
 });
 
-const onEnded = () => {
+const patchUser = (body) => {
   fetch(`${apiUri}/${user}`, {
     method: 'PATCH',
-    body: JSON.stringify({
-      watchedToEnd: mediaclipId,
-    }),
+    body: JSON.stringify(body),
     headers: {
       'Content-type': 'application/json; charset=UTF-8',
     },
   })
     .then((response) => response.json())
     .then((json) => console.log(json));
+}
+
+const onEnded = () => {
+  patchUser({ watchedToEnd: mediaclipId });
 };
 
 const onFourtyPercent = () => {
-  fetch(`${apiUri}/${user}`, {
-    method: 'PATCH',
-    body: JSON.stringify({
-      watchedFourtyPercent: mediaclipId,
-    }),
-    headers: {
-      'Content-type': 'application/json; charset=UTF-8',
-    },
-  })
-    .then((response) => response.json())
-    .then((json) => console.log(json));
+  patchUser({ watchedFourtyPercent: mediaclipId });
 
   myPlayer.off('timeupdate');
 };
