@@ -10,6 +10,7 @@ class PostsController < ApplicationController
   # GET /posts/1
   # GET /posts/1.json
   def show
+    set_user
   end
 
   # GET /posts/new
@@ -65,6 +66,10 @@ class PostsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_post
       @post = Post.find(params[:id])
+    end
+
+    def set_user
+      @user = params.permit(:user)[:user]
     end
 
     # Only allow a list of trusted parameters through.
