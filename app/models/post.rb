@@ -5,10 +5,12 @@ class Post < ActiveResource::Base
   self.site = "http://jsonplaceholder.typicode.com"
 
   def mediaclip_id
-    mediaclips_mapping = SmarterCSV.process('static/mapping.csv')
+    processed_csv = SmarterCSV.process('static/mapping.csv')
 
-    sorted_by_id = mediaclips_mapping.sort_by { |mapping| mapping[:id] }
+    mediaclips_mapping = processed_csv.map do |mapping| 
+      { mapping[:id] => mapping[:mediaclip_id] }
+    end.reduce({}, :merge)
 
-    return sorted_by_id[id-1][:mediaclip_id]
+    return mediaclips_mapping[id]
   end
 end
