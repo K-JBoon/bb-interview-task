@@ -17,10 +17,12 @@
 
 <script>
 
+const apiUri = "https://jsonplaceholder.typicode.com/users";
+
 const user = "<%= @user %>" || localStorage.getItem("user_id");
 const mediaclipId = "<%= @post.mediaclip_id%>";
 
-const apiUri = "https://jsonplaceholder.typicode.com/users";
+let pastFourtyPercent = false;
 
 let myPlayer = new bluebillywig.Player( `http://demo.bbvms.com/p/default/c/${mediaclipId}.json`, {
   target: document.getElementById("myPlayerDiv"),
@@ -44,16 +46,18 @@ const onEnded = () => {
 };
 
 const onFourtyPercent = () => {
-  patchUser({ watchedFourtyPercent: mediaclipId });
+  if(!pastFourtyPercent) {
+    pastFourtyPercent = true;
 
-  myPlayer.off('timeupdate');
+    patchUser({ watchedFourtyPercent: mediaclipId });
+  }
 };
 
 const onTimeupdate = () => {
   let currentTime = myPlayer.getCurrentTime();
   let maxTime = myPlayer.getDuration();
 
-  if (currentTime / maxTime >= 0.4) {
+  if (!pastFourtyPercent && currentTime / maxTime >= 0.4) {
     onFourtyPercent();
   }
 }
