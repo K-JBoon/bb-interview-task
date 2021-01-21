@@ -55,3 +55,8 @@ Currently, there is a **Back** button on each page that returns you to the index
 
 ## Remove debugging information
 Currently, the post ID and mediaclip ID are shown above the video. At the 40% mark and at the end of the video, a logging message also appears in the Javscript console.
+
+## No message shown when no associated mediaclip
+Currently, when there is no associated mediaclip with a post ID, no video element is shown, and no error message is shown either.
+
+The page looks very broken, and ideally there would be something shown to the user to let them know what is going on.
