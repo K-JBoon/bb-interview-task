@@ -7,7 +7,7 @@
   <%= @post.mediaclip_id %>
 </p>
 
-<script src="http://demo.bbvms.com/launchpad/"></script>
+<script src="https://demo.bbvms.com/launchpad/"></script>
 
 <div id="myPlayerDiv"></div>
 
@@ -24,7 +24,7 @@ const mediaclipId = "<%= @post.mediaclip_id%>";
 
 let pastFourtyPercent = false;
 
-let myPlayer = new bluebillywig.Player( `http://demo.bbvms.com/p/default/c/${mediaclipId}.json`, {
+let myPlayer = new bluebillywig.Player( `https://demo.bbvms.com/p/default/c/${mediaclipId}.json`, {
   target: document.getElementById("myPlayerDiv"),
   autoPlay: "false"
 });
