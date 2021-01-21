@@ -60,3 +60,6 @@ Currently, the post ID and mediaclip ID are shown above the video. At the 40% ma
 Currently, when there is no associated mediaclip with a post ID, no video element is shown, and no error message is shown either.
 
 The page looks very broken, and ideally there would be something shown to the user to let them know what is going on.
+
+## No error handling when user does not exist
+The application will try to update the user if they reach 40% or the full duration, but if they don't exist, nothing happens.
