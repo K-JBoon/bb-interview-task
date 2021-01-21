@@ -22,4 +22,10 @@ describe Post, "#mediaclip_id" do
 
     it { is_expected.to eq 3888500 }
   end
+
+  context "when the ID has no associated value" do
+    let(:id) { 100 }
+
+    it { is_expected.to eq nil }
+  end
 end
