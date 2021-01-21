@@ -9,6 +9,6 @@ class Post < ActiveResource::Base
 
     sorted_by_id = mediaclips_mapping.sort_by { |mapping| mapping[:id] }
 
-    return sorted_by_id[id][:mediaclip_id]
+    return sorted_by_id[id-1][:mediaclip_id]
   end
 end
