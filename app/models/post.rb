@@ -2,7 +2,7 @@ require 'smarter_csv'
 
 class Post < ActiveResource::Base
   self.include_format_in_path = false
-  self.site = "http://jsonplaceholder.typicode.com"
+  self.site = "https://jsonplaceholder.typicode.com"
 
   def mediaclip_id
     processed_csv = SmarterCSV.process('static/mapping.csv')

@@ -27,3 +27,11 @@ LoadError:
 ```
 
 The internet did not provide any useful information, and adding the `rexml` gem was just a wild guess. It's working now, but I'd have liked to spend more time on figuring out what is going on here.
+
+## Less embedded javascript
+Due to me already spending a lot of time (~30 minutes) fixing RSpec errors, I did not want to spend a lot more time on fiddling with Rails.
+
+I decided to embed all of my JavaScript on the 'show' page. Ideally I would have moved the scripts over to separate files.
+
+## Tested javascript
+Due to me already spending a lot of time on setup of frameworks, javascript testing has been skipped and has all been done manually.

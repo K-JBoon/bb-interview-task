@@ -17,14 +17,59 @@
 
 <script>
 
-// Embed the player in the element "myPlayerDiv". Other playout settings (like width, height, autoPlay) can also be overruled by including them in the object passed as a second parameter:
+const user = "<%= @user %>" || localStorage.getItem("user_id");
+const mediaclipId = "<%= @post.mediaclip_id%>";
 
-let user = "<%= @user %>" || localStorage.getItem("user_id");
+const apiUri = "https://jsonplaceholder.typicode.com/users";
 
-var myPlayer = new bluebillywig.Player( "http://demo.bbvms.com/p/default/c/<%= @post.mediaclip_id %>.json", {
+let myPlayer = new bluebillywig.Player( `http://demo.bbvms.com/p/default/c/${mediaclipId}.json`, {
   target: document.getElementById("myPlayerDiv"),
   autoPlay: "false"
 });
+
+const onEnded = () => {
+  fetch(`${apiUri}/${user}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      watchedToEnd: mediaclipId,
+    }),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  })
+    .then((response) => response.json())
+    .then((json) => console.log(json));
+};
+
+const onFourtyPercent = () => {
+  fetch(`${apiUri}/${user}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      watchedFourtyPercent: mediaclipId,
+    }),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  })
+    .then((response) => response.json())
+    .then((json) => console.log(json));
+
+  myPlayer.off('timeupdate');
+};
+
+const onTimeupdate = () => {
+  let currentTime = myPlayer.getCurrentTime();
+  let maxTime = myPlayer.getDuration();
+
+  if (currentTime / maxTime >= 0.4) {
+    onFourtyPercent();
+  }
+}
+
+if (user != null) {
+  myPlayer.on('ended', onEnded);
+  myPlayer.on('timeupdate', onTimeupdate);
+}
 
 myPlayer.play();
 
