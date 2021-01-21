@@ -19,7 +19,7 @@
 
 // Embed the player in the element "myPlayerDiv". Other playout settings (like width, height, autoPlay) can also be overruled by including them in the object passed as a second parameter:
 
-let user = "<%= @user %>" || localStorage.getItem("user");
+let user = "<%= @user %>" || localStorage.getItem("user_id");
 
 var myPlayer = new bluebillywig.Player( "http://demo.bbvms.com/p/default/c/<%= @post.mediaclip_id %>.json", {
   target: document.getElementById("myPlayerDiv"),
