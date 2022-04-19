@@ -6,14 +6,15 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 
-
-
+app.set('view engine', 'ejs');
+app.set('views', (__dirname + "/app" + "/views")); 
 
 
 // middleware
 const bodyParser = require("body-parser");
 app.use(bodyParser.json({ limit: "2gb" }) );
-app.use(bodyParser.urlencoded({ extended: true, limit: "2gb"}));
+// app.use(bodyParser.urlencoded({ extended: true, limit: "2gb"}));
+app.use(express.urlencoded({ extended: false }));
 
 
 const morgan = require("morgan");
@@ -26,6 +27,7 @@ routes(app);
 
 
 const request = require('request');
+const { path } = require('express/lib/application');
 const placeHolderOption = {
     server: 'https://jsonplaceholder.typicode.com'
 }
