@@ -24,6 +24,13 @@ var myPlayer = new bluebillywig.Player( videoURL, {
 });
 // call the play method on the newly created player:
 myPlayer.play();
+myPlayer.on('ended', onEndedPlay);
+
+
+function onEndedPlay() {
+  console.log("Finishhh");
+}
+
 </script>
 
 
