@@ -17,9 +17,8 @@ Post.getPostById = function getPostById(id, result) {
         if(err) result(true, {valid: false});
         else{
             request(`https://jsonplaceholder.typicode.com/posts?id=${id}`, { json: true }, (err, res, body) => { 
-            if (err) { console.log("Aqui") ; result(true, {valid: false}); }
+            if (err) { result(true, {valid: false}); }
             else{    
-                console.log(body);
                 if(body.length == 0) {
                     result (false, {valid: false}) 
                 } 

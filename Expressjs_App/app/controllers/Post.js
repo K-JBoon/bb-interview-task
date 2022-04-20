@@ -2,6 +2,16 @@ var request = require('request');
 var Post = require('../models/Post');
  
 
+exports.getPost = function (req,res) {
+
+    console.log(req.query.user);
+    if(req.query.user) user = req.query.user;
+    else user = '';
+
+    res.render('post', {user: user});
+}
+
+
 
 exports.getPostById = function(req, res) {
 

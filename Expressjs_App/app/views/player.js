@@ -1,20 +1,10 @@
-<%- include("post.ejs") %>
-<h2>Title : <%= title %> </h2>
-<h3>Body :  <%= body %> </h3>
 
+// window.onload = function() {
 
-<script src="https://cdn.bluebillywig.com/apps/player/20220419.113245/player.js"></script>
-<div id="myPlayerDiv"></div>
+function playBB(){
 
-<div id="mydiv" data-test=<%= mediaID %>></div>
-
-
-<script type="text/javascript" src="player.js" async></script>
-
-<script>
 var mediaID = document.getElementById('mydiv').dataset.test;
 var videoURL = `https://demo.bbvms.com/p/default/c/${mediaID}.json`;
-
 // Embed the player in the element "myPlayerDiv". Other playout settings (like width, height, autoPlay) can also be overruled by including them in the object passed as a second parameter:
 var myPlayer = new bluebillywig.Player( videoURL, {
         target : document.getElementById("myPlayerDiv"),
@@ -24,6 +14,7 @@ var myPlayer = new bluebillywig.Player( videoURL, {
 });
 // call the play method on the newly created player:
 myPlayer.play();
-</script>
+}
+// }
 
-
+export const playBB = playBB;

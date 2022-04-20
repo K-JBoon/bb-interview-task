@@ -1,8 +1,30 @@
-<h1>Search Post</h1>
+
+<div id="userInfo" data-test=<%= user %>></div>
+
+<script>
+    var user = document.getElementById('userInfo').dataset.test;
+    if(user.trim() != "") {
+        localStorage.setItem('user_id', user);
+    } else {
+        var cachedUser = localStorage.getItem('user_id');
+        if(cachedUser.trim() != "") {
+            var user = cachedUser;
+        }
+    }
+console.log(localStorage)
+</script>
+
+
+
+<h1>Hello User <%= user %> </h1>
+<h2>Search Post</h2>
 
 <form action="/postId" method="POST">
     <label for="postId">Post ID</label>
     <input type="text" id="postId" name = "postId" required>
     <button>Search</button>
 </form>
+
+
+
 

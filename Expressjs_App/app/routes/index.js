@@ -19,10 +19,11 @@ module.exports = function(app){
     // app.route('/posts').get(Posts.getPostById);
     app.route('/postId').post(Posts.getPostById);
 
+    app.route('/post').get(Posts.getPost);
 
-    app.get('/post', (req, res) => {
-        res.render('post');
-    });
+    // app.get('/post', (req, res) => {
+    //     res.render('post');
+    // });
 
 
     // app.post('/postId', (req, res) => {
