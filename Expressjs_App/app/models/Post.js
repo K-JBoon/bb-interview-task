@@ -17,12 +17,14 @@ Post.getPostById = function getPostById(id, result) {
         if(err) result(true, {valid: false});
         else{
             request(`https://jsonplaceholder.typicode.com/posts?id=${id}`, { json: true }, (err, res, body) => { 
-            if (err) { result(true, {valid: false}) }
+            if (err) { console.log("Aqui") ; result(true, {valid: false}); }
             else{    
-                if(body.length === 0 && body !== 'undefined') result (false, {valid: false}) 
+                console.log(body);
+                if(body.length == 0) {
+                    result (false, {valid: false}) 
+                } 
                 else {
                     // postInfo: information regarding the post ; mediaID: mediaID clip for the postID
-                    console.log(resMedia.Id);
                     result(false, {postInfo: body[0], mediaID: resMedia.Id})
                 }
             };
@@ -48,7 +50,8 @@ async function getMediaID(id, result){
         .on('end', () => {
             console.log(`${filename} read successfull`);
             const foundItem = mappingData.find(item => item.Post == id);
-            result(null, {Id: foundItem.Media});
+            if(foundItem) result(null, {Id: foundItem.Media});
+            else result(true, {valid: false})
         })
     }
 

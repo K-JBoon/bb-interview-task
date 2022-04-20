@@ -2,31 +2,16 @@ var request = require('request');
 var Post = require('../models/Post');
  
 
-// exports.getPostById = function(req, res) {
-
-//     if(!req.body.postId) {
-//        res.status(400).send({ error: true, message: 'No id provided'});
-//        return;
-//     }
-
-//     Post.getPostById(req.body.postId, function(err, posts) {
-//         console.log("Entrei")
-//     // Post.getPostById(req.query.id, function(err, posts) {
-//         if(err) res.send({error: true});
-//         else res.send(posts);
-//     })
-// }
-
 
 exports.getPostById = function(req, res) {
 
     if(!req.body.postId) {
-       res.render('viewPost', { title: "Not Found" , body: "Not Found" });
+       res.render('notFound');
        return;
     }
 
     Post.getPostById(req.body.postId, function(err, result) {
-        if(err) res.render('viewPost', { title: "Not Found" , body: "Not Found" });
+        if(err) res.render('notFound');
         else {
             // console.log(result.mediaID);
             res.render('viewPost', { title: result.postInfo.title , body: result.postInfo.body, mediaID: result.mediaID });
