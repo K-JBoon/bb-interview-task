@@ -9,11 +9,11 @@
 <div id="mydiv" data-test=<%= mediaID %>></div>
 
 
-<script type="text/javascript" src="player.js" async></script>
-
 <script>
 var mediaID = document.getElementById('mydiv').dataset.test;
 var videoURL = `https://demo.bbvms.com/p/default/c/${mediaID}.json`;
+var userID = localStorage.getItem('user_id');
+var xhr = new XMLHttpRequest();
 
 // Embed the player in the element "myPlayerDiv". Other playout settings (like width, height, autoPlay) can also be overruled by including them in the object passed as a second parameter:
 var myPlayer = new bluebillywig.Player( videoURL, {
@@ -24,11 +24,67 @@ var myPlayer = new bluebillywig.Player( videoURL, {
 });
 // call the play method on the newly created player:
 myPlayer.play();
+
+// call method with player ended playing video;
 myPlayer.on('ended', onEndedPlay);
+myPlayer.on('play', function(){
+  totalTime = myPlayer.getDuration();
+  newVideo = true;
+  console.log(newVideo);
+});
+
+myPlayer.on('timeupdate', onVideoPlay);
+
+
+
+
+
+
+
+
+function onVideoPlay( ){
+  currentTime = myPlayer.getCurrentTime();
+  compareTime = totalTime * 0.4 ; 
+  var url = "https://jsonplaceholder.typicode.com/todos";
+
+  if(totalTime != 0 && newVideo == true) {
+    if(currentTime >= compareTime) {
+      fetch(url, {
+            method:"POST",
+            body: JSON.stringify({
+              userId: userID,
+              videoId: mediaID,
+              title: "40% Video Watched",
+              completed: "True"
+                })
+              }).then(result => {
+                  // do something with the result
+                  console.log("Completed with result:", result);
+              }).catch(err => {
+                  // if any error occured, then catch it here
+                  console.error(err);
+    });
+    } 
+  }
+}
+
 
 
 function onEndedPlay() {
-  console.log("Finishhh");
+  var url = "https://jsonplaceholder.typicode.com/todos";
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify({
+    userId: userID,
+    videoId: mediaID,
+    title: "Full Video Watched",
+    completed: "True"
+ }));
+
+  xhr.onload = function() {
+      var data = JSON.parse(this.responseText);
+      console.log(data);
+  };
 }
 
 </script>
