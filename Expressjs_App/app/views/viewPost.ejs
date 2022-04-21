@@ -1,4 +1,4 @@
-<%- include("post.ejs") %>
+<%- include("post.ejs", {user:""}) %>
 <h2>Title : <%= title %> </h2>
 <h3>Body :  <%= body %> </h3>
 
@@ -30,18 +30,13 @@ myPlayer.on('ended', onEndedPlay);
 myPlayer.on('play', function(){
   totalTime = myPlayer.getDuration();
   newVideo = true;
-  console.log(newVideo);
 });
-
 myPlayer.on('timeupdate', onVideoPlay);
 
 
 
 
-
-
-
-
+// Function to send post at 40% of video
 function onVideoPlay( ){
   currentTime = myPlayer.getCurrentTime();
   compareTime = totalTime * 0.4 ; 
@@ -49,27 +44,26 @@ function onVideoPlay( ){
 
   if(totalTime != 0 && newVideo == true) {
     if(currentTime >= compareTime) {
-      fetch(url, {
-            method:"POST",
-            body: JSON.stringify({
-              userId: userID,
-              videoId: mediaID,
-              title: "40% Video Watched",
-              completed: "True"
-                })
-              }).then(result => {
-                  // do something with the result
-                  console.log("Completed with result:", result);
-              }).catch(err => {
-                  // if any error occured, then catch it here
-                  console.error(err);
-    });
+      newVideo = false;
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({
+        userId: userID,
+        videoId: mediaID,
+        title: "40% Video Watched",
+        completed: "True"
+      }));
+
+      xhr.onload = function() {
+          var data = JSON.parse(this.responseText);
+          console.log(data);
+      };
+    }
     } 
   }
-}
 
 
-
+// Function to send post at end of video
 function onEndedPlay() {
   var url = "https://jsonplaceholder.typicode.com/todos";
   xhr.open("POST", url, true);
